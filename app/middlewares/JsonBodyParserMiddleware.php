@@ -12,6 +12,8 @@ class JsonBodyParserMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $credentials = $request->getParsedBody();
+
         // CONTENT-TYPE VALIDATION
         if (!strstr($request->getHeaderLine('Content-Type'), 'application/json')) {
             throw new HttpBadRequestException($request);
@@ -22,6 +24,8 @@ class JsonBodyParserMiddleware implements MiddlewareInterface
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new HttpBadRequestException($request);
         }
+
+        $contents = array_merge($credentials, $contents);
 
         return $handler->handle($request->withParsedBody($contents));
     }

@@ -13,6 +13,8 @@ class CredentialDBValidationMiddleware implements MiddlewareInterface
     {
         $credentials = $request->getParsedBody();
 
+        $credentials['client'] = 'APP.DEVENV.WWP';
+
 
         return $handler->handle($request->withParsedBody($credentials));
     }

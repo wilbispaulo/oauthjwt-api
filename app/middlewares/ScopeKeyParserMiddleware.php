@@ -33,6 +33,8 @@ class ScopeKeyParserMiddleware implements MiddlewareInterface
             throw new HttpBadRequestException($request);
         }
 
-        return $handler->handle($request->withParsedBody($scope));
+        $contents['scope'] = $scope;
+
+        return $handler->handle($request->withParsedBody($contents));
     }
 }

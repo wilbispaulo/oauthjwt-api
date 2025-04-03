@@ -12,13 +12,18 @@ class TokenController
     {
         $contents = $request->getParsedBody();
 
-        var_dump($contents);
-        die();
-        $oAuthJWT = new OAuthSrv($contents['client'], dirname(__FILE__, 2) . $_ENV['PATH_TO_CERT'], $_ENV['CERT_SECRET']);
 
-        $credentials = $oAuthJWT->genCredentials();
+        $oAuthJWT = new OAuthSrv($contents['client'], dirname(__FILE__, 3) . $_ENV['PATH_TO_CERT'], $_ENV['CERT_SECRET']);
 
-        $response->getBody()->write(json_encode($credentials));
+        $token = $oAuthJWT->tokenJWT($_ENV['ISSUER'], $_ENV['EXP_TOKEN'], $contents['username'], $contents['password'], $contents['scope']);
+
+        $tokenExp = "";
+
+        $response->getBody()->write(json_encode([
+            'client' => $contents['client'],
+            'token_expiration' => $tokenExp,
+            'token' => $token
+        ]));
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus(200);
