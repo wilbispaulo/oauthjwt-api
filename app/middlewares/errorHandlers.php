@@ -21,7 +21,7 @@ $methodNotAllowedErrorHandler = function (ServerRequestInterface $request, Throw
 
 $unauthorizedErrorHandler = function (ServerRequestInterface $request, Throwable $exception, bool $displayErrorDetails) {
     $response = new Response();
-    $response->getBody()->write(json_encode(['error' => '401_unauthorized']));
+    $response->getBody()->write(json_encode(['error' => '401_denied_access']));
     return $response
         ->withStatus(401)
         ->withHeader('Content-Type', 'application/json');
@@ -32,5 +32,13 @@ $badRequestErrorHandler = function (ServerRequestInterface $request, Throwable $
     $response->getBody()->write(json_encode(['error' => '400_bad_request']));
     return $response
         ->withStatus(400)
+        ->withHeader('Content-Type', 'application/json');
+};
+
+$internalServerErrorHandler = function (ServerRequestInterface $request, Throwable $exception, bool $displayErrorDetails) {
+    $response = new Response();
+    $response->getBody()->write(json_encode(['error' => '500_internal_server_error']));
+    return $response
+        ->withStatus(500)
         ->withHeader('Content-Type', 'application/json');
 };

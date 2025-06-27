@@ -2,6 +2,7 @@
 
 use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpBadRequestException;
+use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Exception\HttpUnauthorizedException;
 use Slim\Exception\HttpMethodNotAllowedException;
 
@@ -17,6 +18,7 @@ $app->addErrorMiddleware(true, true, true)
     ->setErrorHandler(HttpNotFoundException::class, $notFoundErrorHandler)
     ->setErrorHandler(HttpMethodNotAllowedException::class, $methodNotAllowedErrorHandler)
     ->setErrorHandler(HttpBadRequestException::class, $badRequestErrorHandler)
-    ->setErrorHandler(HttpUnauthorizedException::class, $unauthorizedErrorHandler);
+    ->setErrorHandler(HttpUnauthorizedException::class, $unauthorizedErrorHandler)
+    ->setErrorHandler(HttpInternalServerErrorException::class, $internalServerErrorHandler);
 
 $app->run();

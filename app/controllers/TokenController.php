@@ -12,16 +12,16 @@ class TokenController
     {
         $contents = $request->getParsedBody();
 
+        $oAuthJWT = new OAuthSrv($contents['client_aud'], dirname(__FILE__, 3) . $_ENV['PATH_TO_CERT'], $_ENV['CERT_SECRET']);
 
-        $oAuthJWT = new OAuthSrv($contents['client'], dirname(__FILE__, 3) . $_ENV['PATH_TO_CERT'], $_ENV['CERT_SECRET']);
+        $token = $oAuthJWT->tokenJWT($_ENV['ISSUER'], $_ENV['EXP_TOKEN'], $contents['scope']);
 
-        $token = $oAuthJWT->tokenJWT($_ENV['ISSUER'], $_ENV['EXP_TOKEN'], $contents['username'], $contents['password'], $contents['scope']);
-
-        $tokenExp = "";
+        $dataHoraExp = date(DATE_ATOM, $oAuthJWT->getClaims()['exp']);
 
         $response->getBody()->write(json_encode([
-            'client' => $contents['client'],
-            'token_expiration' => $tokenExp,
+            'client' => $oAuthJWT->getClaims()['aud'],
+            'token_expiration' => $dataHoraExp,
+            'scope' => $oAuthJWT->getClaims()['scope'],
             'token' => $token
         ]));
         return $response

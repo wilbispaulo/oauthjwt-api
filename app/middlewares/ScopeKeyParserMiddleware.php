@@ -24,7 +24,7 @@ class ScopeKeyParserMiddleware implements MiddlewareInterface
         $ok = true;
         foreach ($contents['scope'] as $s => $value) {
             $ok &= ($s !== '');
-            $ok &= in_array(strtolower($value), ['get', 'post', 'put', 'patch', 'delete']);
+            $ok &= in_array(strtolower($value), ['get', 'post', 'put', 'patch', 'delete', 'all']);
             if ($ok) {
                 array_push($scope, $s . '/' . $value);
             }
