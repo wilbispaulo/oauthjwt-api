@@ -17,7 +17,7 @@ class CredentialDBValidationMiddleware implements MiddlewareInterface
         $credentials = $request->getParsedBody();
 
         $userDB = new Credential();
-        $user = $user = $userDB->findBy('clientid', $credentials['username']);
+        $user = $userDB->findBy('clientid', $credentials['username']);
         if ($user === false) {
             throw new HttpInternalServerErrorException($request);
         }
@@ -27,8 +27,7 @@ class CredentialDBValidationMiddleware implements MiddlewareInterface
         }
 
         $credential = base64_decode($credentials['password']);
-        $credentialPlainText = $user[0]['username'] . '#' . $credentials['username'] . '#' . (string)$user[0]['timestamp'];
-
+        $credentialPlainText = $user[0]['username'] . '#' . $credentials['username'] . '#' . (string)$user[0]['timestamp'] . "%" . $_ENV['CERT_SECRET'];
 
         if (!password_verify($credentialPlainText, $credential)) {
             throw new HttpUnauthorizedException($request);

@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Exception\HttpUnauthorizedException;
 
 class UserAuthorizationMiddleware implements MiddlewareInterface
@@ -17,8 +18,14 @@ class UserAuthorizationMiddleware implements MiddlewareInterface
         $credentials = $request->getParsedBody();
 
         $user = new User();
-        $userData = $user->findBy('email', $credentials['username'])[0];
-        if (password_verify($credentials['password'], $userData['password'])) {
+        $userData = $user->findBy('email', $credentials['username']);
+        if ($userData === false) {
+            throw new HttpInternalServerErrorException($request);
+        }
+        if (count($userData) === 0) {
+            throw new HttpUnauthorizedException($request);
+        }
+        if (password_verify($credentials['password'], $userData[0]['password'])) {
             $credentials['authorization'] = 'pass';
         } else {
             throw new HttpUnauthorizedException($request);

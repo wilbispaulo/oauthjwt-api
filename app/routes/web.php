@@ -19,7 +19,10 @@ $app->post('/api/credentials', [CredentialController::class, 'create'])
     ->add(new JsonBodyParserMiddleware())
     ->add(new UserAuthorizationMiddleware())
     ->add(new CredentialBasicValidationMiddleware());
-$app->get('/api/credentials/{client}', [CredentialController::class, 'getClient'])
+$app->get('/api/credentials/one/{client}', [CredentialController::class, 'getClient'])
+    ->add(new UserAuthorizationMiddleware())
+    ->add(new CredentialBasicValidationMiddleware());
+$app->get('/api/credentials/all', [CredentialController::class, 'getAll'])
     ->add(new UserAuthorizationMiddleware())
     ->add(new CredentialBasicValidationMiddleware());
 $app->post('/api/claims', [ClaimController::class, 'create'])
