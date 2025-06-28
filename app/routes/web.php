@@ -19,6 +19,9 @@ $app->post('/api/credentials', [CredentialController::class, 'create'])
     ->add(new JsonBodyParserMiddleware())
     ->add(new UserAuthorizationMiddleware())
     ->add(new CredentialBasicValidationMiddleware());
+$app->get('/api/credentials/{client}', [CredentialController::class, 'getClient'])
+    ->add(new UserAuthorizationMiddleware())
+    ->add(new CredentialBasicValidationMiddleware());
 $app->post('/api/claims', [ClaimController::class, 'create'])
     ->add(new ClientIdDBValidationMiddleware())
     ->add(new BodyBasicParserMiddleware())
