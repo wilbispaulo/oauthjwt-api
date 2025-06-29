@@ -3,6 +3,7 @@
 namespace App\controllers;
 
 use App\models\Credential;
+use App\models\Endpoint;
 use AuthServerJwt\OAuthSrv;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -93,6 +94,34 @@ class CredentialController
         }
 
         $response->getBody()->write(json_encode($cred, JSON_FORCE_OBJECT | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
+    }
+
+    public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+
+        $result = [];
+
+        $credentials = new Credential();
+        $endpoints = new Endpoint();
+
+        if (count($endpoints->findBy('clientid', $data['clientid'])) > 0) {
+            if (!$endpoints->delete('clientid', $data['clientid'])) {
+                throw new HttpInternalServerErrorException($request);
+            }
+        }
+
+        if (!$credentials->delete('username', $data['username'])) {
+            throw new HttpInternalServerErrorException($request);
+        }
+
+        $result['client'] = $args['client'];
+        $result['status'] = 'deleted';
+
+        $response->getBody()->write(json_encode($result, JSON_FORCE_OBJECT | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus(200);

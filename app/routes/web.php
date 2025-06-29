@@ -12,11 +12,16 @@ use App\middlewares\ClaimDeleteParserMiddleware;
 use App\middlewares\UserAuthorizationMiddleware;
 use App\middlewares\ClientIdDBValidationMiddleware;
 use App\middlewares\CredentialDBValidationMiddleware;
+use App\middlewares\CredentialsDeleteParserMiddleware;
 use App\middlewares\CredentialBasicValidationMiddleware;
 
 $app->post('/api/credentials', [CredentialController::class, 'create'])
     ->add(new ClientKeyParserMiddleware())
     ->add(new JsonBodyParserMiddleware())
+    ->add(new UserAuthorizationMiddleware())
+    ->add(new CredentialBasicValidationMiddleware());
+$app->delete('/api/credentials/{client}', [CredentialController::class, 'delete'])
+    ->add(new CredentialsDeleteParserMiddleware())
     ->add(new UserAuthorizationMiddleware())
     ->add(new CredentialBasicValidationMiddleware());
 $app->get('/api/credentials/one/{client}', [CredentialController::class, 'getClient'])
