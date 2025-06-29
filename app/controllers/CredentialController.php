@@ -77,6 +77,7 @@ class CredentialController
 
         $credentialsDB = new Credential();
         $credentials = $credentialsDB->fetchAll();
+        $endpointsDB = new Endpoint();
 
         if (count($credentials) === 0) {
             throw new HttpNotFoundException($request);
@@ -90,6 +91,12 @@ class CredentialController
             $cred[$i]['time_cred'] = date(DATE_ATOM, $credential['timestamp']);
             $cred[$i]['clientid'] = $credential['clientid'];
             $cred[$i]['client_secret'] = $clientSecret;
+            $endpoints = $endpointsDB->findBy('clientid', $credential['clientid']);
+            $j = 0;
+            foreach ($endpoints as $endpoint) {
+                $cred[$i]['claims'][$j] = $endpoint['endpoint'] . '/' . $endpoint['method'];
+                $j++;
+            }
             $i++;
         }
 

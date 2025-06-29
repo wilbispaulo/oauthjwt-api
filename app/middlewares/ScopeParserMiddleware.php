@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Slim\Exception\HttpInternalServerErrorException;
+use Slim\Exception\HttpBadRequestException;
 
 class ScopeParserMiddleware implements MiddlewareInterface
 {
@@ -18,7 +18,7 @@ class ScopeParserMiddleware implements MiddlewareInterface
         $endpoints = new Endpoint();
         $claimsDB = $endpoints->findBy('clientid', $contents['username']);
         if (count($claimsDB) === 0) {
-            throw new HttpInternalServerErrorException($request);
+            throw new HttpBadRequestException($request);
         }
         $claims = [];
         foreach ($claimsDB as $key => $record) {
